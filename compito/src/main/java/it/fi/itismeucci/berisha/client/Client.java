@@ -19,6 +19,9 @@ public class Client {
         this.port = port;
     }
 
+    /**
+     * Metodo per connettersi al server
+     */
     public void connetti(){
         try {
             server = new Socket(address, port);
@@ -36,30 +39,34 @@ public class Client {
         }
     }
 
+    /**
+     * Metodo per iniziare la comunicazione col server per poter salvare i messaggi inviati nella lista delle note
+     */
     public void comunica(){
 
-        Scanner tastiera = new Scanner(System.in);
+        Scanner tastiera = new Scanner(System.in); //si apre l'input da tastiera
         String messaggio = "";
         
         while(true){
 
             System.out.println(riceviMessaggio());
 
-            messaggio = tastiera.nextLine();
+            messaggio = tastiera.nextLine(); //si salva in messaggio l'input preso da tastiera
             inviaMessaggio(messaggio);
             messaggio = riceviMessaggio();
 
-            if(messaggio.startsWith("/")){
+            //si controlla la risposta inviata dal server per decidere cosa stampare come risposta
+            if(messaggio.startsWith("/")){ //il server ha inviato la lista delle note, la stringa è da scomporre
                 System.out.println(scomponiLista(messaggio));
 
-            }else if(messaggio.equals(".")){
+            }else if(messaggio.equals(".")){ //il server comunica che si sta utilizzando un carattere non valido
                 System.out.println("Non è possibile utilizzare punti");
             
-            }else if(messaggio.equals("CHIUDI")){
+            }else if(messaggio.equals("CHIUDI")){ //il server comunica che è pronto alla chiusura (inizilmente richiesta dall'utente che scrive CHIUDI)
                 System.out.println("Chiusura in corso...");
                 break;
 
-            }else{
+            }else{ //non è successo niente quindi si stampa direttamente il messaggio del server (Che sarà "Nota salvata")
                 System.out.println(messaggio);
             }
 
@@ -68,6 +75,9 @@ public class Client {
         chiudi();
     }
 
+    /**
+     * Metodo che chiude tutti i canali di comunicazione
+     */
     public void chiudi(){
         try {
             invia.close();
@@ -79,6 +89,11 @@ public class Client {
         }
     }
 
+    /**
+     * Metodo che scompone la lista ricevuta, la lista avrà un formato come per esempio: /comprare latte.pagare bolletta luce.revisione macchina...
+     * @param messaggio la lista da scomporre
+     * @return la stringa da stampare che sarà la lista scomposta in un formato più facilmente leggibile
+     */
     public String scomponiLista(String messaggio){
         String str = "Lista:";
         String[] lista = messaggio.substring(1).split("\\.");
@@ -90,6 +105,10 @@ public class Client {
         return str;
     }
 
+    /**
+     * Metodo che invia il messaggio passato per parametro al server
+     * @param messaggio messaggio da inviare al server
+     */
     public void inviaMessaggio(String messaggio){
         try {
             invia.writeBytes(messaggio + '\n');
@@ -99,6 +118,10 @@ public class Client {
         }
     }
 
+    /**
+     * Metodo che riceve il messaggio inviato dal server
+     * @return messaggio ricevuto dal server
+     */
     public String riceviMessaggio(){
         try {
             return ricevi.readLine();

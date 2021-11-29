@@ -26,6 +26,9 @@ public class Server {
         }
     }
 
+    /**
+     * Metodo per aspettare l'arrivo di un client
+     */
     public void connetti(){
         try {
             System.out.println("\nServer in attesa dell'arrivo di un client...");
@@ -43,6 +46,9 @@ public class Server {
 
     }
 
+    /**
+     * Metodo per comunicare col client
+     */
     public void comunica(){
         System.out.println("------Inizio comunicazione------I");
         String messaggio = "";
@@ -55,6 +61,7 @@ public class Server {
             messaggio = riceviMessaggio();
             System.out.println("Ricevuto: " + messaggio);
 
+            //si controlla il tipo di richiesta del client e la validità del messaggio
             if(messaggio.equals("LISTA")){
                 inviaLista();
 
@@ -74,6 +81,9 @@ public class Server {
         chiudi();
     }
 
+    /**
+     * Metodo che chiude tutti i canali di comunicazione
+     */
     public void chiudi(){  
         try {
             invia.close();
@@ -85,14 +95,25 @@ public class Server {
         }
     }
 
+    /**
+     * Metodo per salvare le note, le note vengono salvate in un'unica stringa e vengono separate da punti, sarà il client a separare le note quando gli verrà inviato il messaggio
+     * @param nota  nota da salvare nella stringa che contiene tutte le note
+     */
     public void salvaNota(String nota){
         note += nota + ".";
     }
 
+    /**
+     * Metodo che invia la lista delle note al client, invierà una lista di note separate da un punto, all'inizio della lista ci sarà uno slash per indicare che questa è una stringa da scomporre
+    */
     public void inviaLista(){
         inviaMessaggio("/" + note);
     }
 
+    /**
+     * Invia il messaggio passato per parametro al client
+     * @param messaggio messaggio da inviare al client
+     */
     public void inviaMessaggio(String messaggio){
         try {
             invia.writeBytes(messaggio + '\n');
@@ -102,6 +123,10 @@ public class Server {
         }
     }
 
+    /**
+     * Rieceve il messaggio inviato dal client
+     * @return il messaggio inviato da client
+     */
     public String riceviMessaggio(){
         try {
             return ricevi.readLine();
